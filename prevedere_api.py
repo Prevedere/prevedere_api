@@ -50,14 +50,37 @@ class PrevedereAPI:
         payload = {'ApiKey': self.api_key,'Query': query}
         results = self.fetch(path,payload)
         return json_normalize(data = results['Results'])
+        
+    def get_companies(self):
+        path = '/company'
+        payload = {'ApiKey': self.api_key}
+        return self.fetch(path,payload)
+
+    def change_company(self, company_id):
+        url = f'https://api.prevedere.com/company/{company_id}'
+        payload = {'ApiKey': self.api_key}
+        r = requests.put(url,params=payload)
+        return None
     
-    def three_period_year_over_year(self,df, col="Value"):
+    def get_context(self):
+        payload = {'ApiKey': self.api_key}
+        url = f'https://api.prevedere.com/context'
+        r = requests.get(url,params=payload)
+        print(r.content)
+        
+    def three_period_year_over_year(self,df):
         if not isinstance(df,pd.DataFrame):
             raise TypeError('Input data must be a dataframe')
         return df.rolling(3).sum()/(df.rolling(3).sum().shift(12))-1
 
 def main():
-    prev = PrevedereAPI()
-    print(prev.search_indicators('+coal +other +fuels'))
+    prev = PrevedereAPI('ab70b32417984f5ba0e7fa2e9f121b85')
+    companies = prev.get_companies()
+    for idx, company in companies.iterrows():
+        if 'Purina' in company['Name']:
+            company_id = company['Id']
+    prev.change_company(company_id)
+    prev.get_context()
+
 if __name__ == '__main__':
     main()
