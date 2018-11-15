@@ -3,7 +3,7 @@ import pandas as pd
 from pandas.io.json import json_normalize
 
 
-class api:
+class Api:
     API_KEY = ""
 
     def __init__(self, api_key=API_KEY):
@@ -47,29 +47,7 @@ class api:
         """
         path = f'/indicator/{provider}/{provider_id}'
         payload = {'ApiKey': self.api_key}
-        i = self.fetch(path, payload)
-        return pd.DataFrame(
-            [
-                i['ProviderId'],
-                i['Name'],
-                i['Provider']['Name'],
-                i['Source'],
-                i['Units'],
-                i['Frequency'],
-                i['StartTime'][:10],
-                i['EndTime'][:10]
-            ],
-            ['ProviderId',
-             'Indicator Name',
-             'Provider',
-             'Source',
-             'Units',
-             'Frequency',
-             'Start Time',
-             'End Time'
-             ],
-            columns=['info']
-        )
+        return json_normalize(self.fetch(path, payload).T)
     
     def providers(self):
         path = '/providers'
