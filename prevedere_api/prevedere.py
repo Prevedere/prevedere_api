@@ -47,7 +47,7 @@ class Api:
         """
         path = f'/indicator/{provider}/{provider_id}'
         payload = {'ApiKey': self.api_key}
-        return json_normalize(self.fetch(path, payload).T)
+        return json_normalize(self.fetch(path, payload)).T
     
     def providers(self):
         path = '/providers'
