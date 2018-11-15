@@ -1,14 +1,12 @@
-
 import requests
-import json
 import pandas as pd
-import numpy as np
 from pandas.io.json import json_normalize
 
-class PrevedereAPI:
+
+class api:
     API_KEY = ""
 
-    def __init__(self,api_key=API_KEY):
+    def __init__(self, api_key=API_KEY):
         self.api_key = api_key
 
     def fetch(self, path, payload):
@@ -17,7 +15,7 @@ class PrevedereAPI:
         df = pd.DataFrame(r.json())
         return df
     
-    def get_indicator(self,provider,provider_id,freq='Monthly',offset=None):
+    def get_indicator(self, provider, provider_id, freq='Monthly', calculation=None, offset=0):
         """
         Create a pandas dataframe with data from the API.
         
@@ -25,10 +23,14 @@ class PrevedereAPI:
         :type url: string
         :param freq: Frequency of indicator to retrieve
         :type freq: string
+        :param offset: Number of periods to offset
+        :type offset: int
+        :param calculation: Calculation to transform the indicator
+        :type calculation: string
         """
         path = f'/indicator/series/{provider}/{provider_id}'
-        payload = {'ApiKey': self.api_key,'Frequency': freq, 'Offset': offset}
-        df = self.fetch(path,payload)
+        payload = {'ApiKey': self.api_key,'Frequency': freq, 'Offset': offset, "Calculation": calculation}
+        df = self.fetch(path, payload)
 
         if "Date" in df.columns:
             df['Date'] = pd.to_datetime(df['Date'])
@@ -50,14 +52,12 @@ class PrevedereAPI:
         payload = {'ApiKey': self.api_key,'Query': query}
         results = self.fetch(path,payload)
         return json_normalize(data = results['Results'])
-    
-    def three_period_year_over_year(self,df, col="Value"):
-        if not isinstance(df,pd.DataFrame):
-            raise TypeError('Input data must be a dataframe')
-        return df.rolling(3).sum()/(df.rolling(3).sum().shift(12))-1
+
+
 
 def main():
     pass
-    
+
+
 if __name__ == '__main__':
     main()
