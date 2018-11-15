@@ -14,7 +14,7 @@ class api:
         r = requests.get(url, params=payload)
         return r.json()
     
-    def get_indicator(self, provider, provider_id, freq='Monthly', calculation=None, offset=0):
+    def indicator_series(self, provider, provider_id, freq='Monthly', calculation=None, offset=0):
         """
         Create a pandas dataframe with data from the API.
         
@@ -32,7 +32,7 @@ class api:
         df = pd.DataFrame(self.fetch(path, payload))
         df.columns = df.columns.str.lower()
 
-        print(self.indicator_info(provider, provider_id))
+        print(self.indicator(provider, provider_id))
 
         if "date" in df.columns:
             df['date'] = pd.to_datetime(df['date'])
@@ -40,7 +40,7 @@ class api:
 
         return df
 
-    def indicator_info(self, provider, provider_id):
+    def indicator(self, provider, provider_id):
         """
         :param provider:
         :param provider_id:
@@ -71,17 +71,17 @@ class api:
             columns=['info']
         )
     
-    def get_providers(self):
+    def providers(self):
         path = '/providers'
         payload = {'ApiKey': self.api_key}
         return self.fetch(path,payload)
 
-    def get_analysis_jobs(self):
+    def analysis_jobs(self):
         path = '/analysisjobs'
         payload = {'ApiKey': self.api_key}
         return self.fetch(path,payload)
     
-    def search_indicators(self, query):
+    def search(self, query):
         path = '/search'
         payload = {'ApiKey': self.api_key,'Query': query}
         results = self.fetch(path,payload)
