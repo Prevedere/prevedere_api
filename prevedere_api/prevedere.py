@@ -11,9 +11,8 @@ class api:
 
     def fetch(self, path, payload):
         url = f'https://api.prevedere.com{path}'
-        r = requests.get(url,params=payload)
-        df = pd.DataFrame(r.json())
-        return df
+        r = requests.get(url, params=payload)
+        return r.json()
     
     def get_indicator(self, provider, provider_id, freq='Monthly', calculation=None, offset=0):
         """
@@ -30,12 +29,46 @@ class api:
         """
         path = f'/indicator/series/{provider}/{provider_id}'
         payload = {'ApiKey': self.api_key,'Frequency': freq, 'Offset': offset, "Calculation": calculation}
-        df = self.fetch(path, payload)
+        df = pd.DataFrame(self.fetch(path, payload))
+        df.columns = df.columns.str.lower()
 
-        if "Date" in df.columns:
-            df['Date'] = pd.to_datetime(df['Date'])
-            df.set_index("Date", inplace=True)
+        print(self.indicator_info(provider, provider_id))
+
+        if "date" in df.columns:
+            df['date'] = pd.to_datetime(df['date'])
+            df.set_index("date", inplace=True)
+
         return df
+
+    def indicator_info(self, provider, provider_id):
+        """
+        :param provider:
+        :param provider_id:
+        """
+        path = f'/indicator/{provider}/{provider_id}'
+        payload = {'ApiKey': self.api_key}
+        i = self.fetch(path, payload)
+        return pd.DataFrame(
+            [
+                i['ProviderId'],
+                i['Name'],
+                i['Provider']['Name'],
+                i['Source'],
+                i['Units'],
+                i['Frequency'],
+                i['StartTime'][:10],
+                i['EndTime'][:10]
+            ],
+            ['ProviderId',
+             'Indicator Name',
+             'Provider',
+             'Source',
+             'Units',
+             'Frequency',
+             'Start Time',
+             'End Time'
+             ]
+        )
     
     def get_providers(self):
         path = '/providers'
@@ -52,7 +85,6 @@ class api:
         payload = {'ApiKey': self.api_key,'Query': query}
         results = self.fetch(path,payload)
         return json_normalize(data = results['Results'])
-
 
 
 def main():
