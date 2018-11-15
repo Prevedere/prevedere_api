@@ -1,1 +1,1 @@
-import PrevedereAPI
+from .prevedere_api import PrevedereAPI
