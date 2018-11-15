@@ -67,7 +67,8 @@ class api:
              'Frequency',
              'Start Time',
              'End Time'
-             ]
+             ],
+            columns=['info']
         )
     
     def get_providers(self):
