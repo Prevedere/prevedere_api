@@ -32,7 +32,16 @@ class Api:
         df = pd.DataFrame(self.fetch(path, payload))
         df.columns = df.columns.str.lower()
 
-        print(self.indicator(provider, provider_id))
+        print(self.indicator(provider, provider_id).loc[
+                  ['ProviderId',
+                   'Provider.Name',
+                   'Name',
+                   'Source',
+                   'Units',
+                   'Frequency',
+                   'StartTime',
+                   'EndTime']
+              ])
 
         if "date" in df.columns:
             df['date'] = pd.to_datetime(df['date'])
@@ -64,6 +73,11 @@ class Api:
         payload = {'ApiKey': self.api_key,'Query': query}
         results = self.fetch(path,payload)
         return json_normalize(data = results['Results'])
+
+    def model(self, model_id):
+        path = f'/rawmodel/{model_id}'
+        payload = {'ApiKey': self.api_key}
+        return self.fetch(path, payload)
 
 
 def main():
