@@ -9,6 +9,7 @@ for full documentation, go to the [Prevedere API](https://api.prevedere.com/meta
 # Use
 ```
 import prevedere
+
 api_key = "xyz123"
 provider = "provider_a"
 provider_id = "a123"
