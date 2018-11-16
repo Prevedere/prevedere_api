@@ -1,8 +1,16 @@
 from distutils.core import setup
 
 setup(
-    name='Prevedere API',
-    version='0.1dev',
+    name='prevedere',
+    version='0.1',
     packages=['prevedere',],
-    long_description=open('README.txt').read(),
+    install_requires=[
+        'requests',
+        'pandas',
+    ],
+    url="https://github.com/prevedere/prevedere_api",
+    classifiers=[
+        "Programming Language :: Python :: 3.6",
+        "Operating System :: OS Independent",
+    ],
 )
