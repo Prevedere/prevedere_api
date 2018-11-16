@@ -1,8 +1,8 @@
 from distutils.core import setup
 
 setup(
-    name='PrevedereAPI',
+    name='Prevedere API',
     version='0.1dev',
-    packages=['prevedere_api',],
+    packages=['prevedere',],
     long_description=open('README.txt').read(),
 )
