@@ -14,7 +14,7 @@ class Api:
         r = requests.get(url, params=payload)
         return r.json()
     
-    def indicator_series(self, provider, provider_id, freq='Monthly', calculation=None, offset=0):
+    def indicator_series(self, provider, provider_id, freq='Monthly', calculation=None, offset=0, verbose=False):
         """
         Create a pandas dataframe with data from the API.
         
@@ -26,22 +26,25 @@ class Api:
         :type offset: int
         :param calculation: Calculation to transform the indicator
         :type calculation: string
+        :param verbose:
+        :type verbose: boolean
         """
         path = f'/indicator/series/{provider}/{provider_id}'
         payload = {'ApiKey': self.api_key,'Frequency': freq, 'Offset': offset, "Calculation": calculation}
         df = pd.DataFrame(self.fetch(path, payload))
         df.columns = df.columns.str.lower()
 
-        print(self.indicator(provider, provider_id).loc[
-                  ['ProviderId',
-                   'Provider.Name',
-                   'Name',
-                   'Source',
-                   'Units',
-                   'Frequency',
-                   'StartTime',
-                   'EndTime']
-              ])
+        if verbose:
+            print(self.indicator(provider, provider_id).loc[
+                      ['ProviderId',
+                       'Provider.Name',
+                       'Name',
+                       'Source',
+                       'Units',
+                       'Frequency',
+                       'StartTime',
+                       'EndTime']
+                  ])
 
         if "date" in df.columns:
             df['date'] = pd.to_datetime(df['date'])
@@ -78,6 +81,15 @@ class Api:
         path = f'/rawmodel/{model_id}'
         payload = {'ApiKey': self.api_key}
         return self.fetch(path, payload)
+
+
+class Model(Api):
+    def __init__(self, api_key, model_id):
+        super().__init__(api_key)
+        self.model_id = model_id
+
+    def raw(self):
+        return self.model(self.model_id)
 
 
 def main():
