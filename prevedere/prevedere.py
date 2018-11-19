@@ -83,15 +83,6 @@ class Api:
         return self.fetch(path, payload)
 
 
-class Model(Api):
-    def __init__(self, api_key, model_id):
-        super().__init__(api_key)
-        self.model_id = model_id
-
-    def raw(self):
-        return self.model(self.model_id)
-
-
 def main():
     pass
 
