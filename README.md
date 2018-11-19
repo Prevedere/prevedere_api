@@ -1,10 +1,10 @@
-# PrevedereAPI
+# prevedere-api
 
-PrevedereAPI provides the ability to access the API and retrieve indicator series data, as well as other information.
-for full documentation, go to the [Prevedere API](https://api.prevedere.com/metadata/).
+prevedere-api provides the ability to access retrieve indicator series data, as well as other information.
+For full documentation, go to the [Prevedere API Metadata](https://api.prevedere.com/metadata/) page.
 
 # Installation
-`pip install git+https://github.com/prevedere/prevedere_api`
+`pip install prevedere-api`
 
 # Use
 ```
