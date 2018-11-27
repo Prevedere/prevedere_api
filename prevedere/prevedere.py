@@ -9,9 +9,8 @@ class Api:
     def __init__(self, api_key=API_KEY):
         self.api_key = api_key
 
-    def fetch(self, path, payload={}):
+    def fetch(self, path, payload):
         url = f'https://api.prevedere.com{path}'
-        payload['ApiKey'] = self.api_key
         r = requests.get(url, params=payload)
         return r.json()
     
@@ -59,25 +58,29 @@ class Api:
         :param provider_id:
         """
         path = f'/indicator/{provider}/{provider_id}'
-        return json_normalize(self.fetch(path)).T
+        payload = {'ApiKey': self.api_key}
+        return json_normalize(self.fetch(path, payload)).T
     
     def providers(self):
         path = '/providers'
-        return self.fetch(path)
+        payload = {'ApiKey': self.api_key}
+        return self.fetch(path,payload)
 
     def analysis_jobs(self):
         path = '/analysisjobs'
-        return self.fetch(path)
+        payload = {'ApiKey': self.api_key}
+        return self.fetch(path,payload)
     
     def search(self, query):
         path = '/search'
-        payload = {'Query': query}
+        payload = {'ApiKey': self.api_key,'Query': query}
         results = self.fetch(path,payload)
         return json_normalize(data = results['Results'])
 
     def model(self, model_id):
         path = f'/rawmodel/{model_id}'
-        return self.fetch(path)
+        payload = {'ApiKey': self.api_key}
+        return self.fetch(path, payload)
 
 
 def main():
