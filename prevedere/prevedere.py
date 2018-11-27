@@ -9,8 +9,9 @@ class Api:
     def __init__(self, api_key=API_KEY):
         self.api_key = api_key
 
-    def fetch(self, path, payload):
+    def fetch(self, path, payload={}):
         url = f'https://api.prevedere.com{path}'
+        payload['ApiKey'] = self.api_key
         r = requests.get(url, params=payload)
         return r.json()
     
@@ -30,7 +31,7 @@ class Api:
         :type verbose: boolean
         """
         path = f'/indicator/series/{provider}/{provider_id}'
-        payload = {'ApiKey': self.api_key,'Frequency': freq, 'Offset': offset, "Calculation": calculation}
+        payload = {'Frequency': freq, 'Offset': offset, "Calculation": calculation}
         df = pd.DataFrame(self.fetch(path, payload))
         df.columns = df.columns.str.lower()
 
@@ -58,29 +59,25 @@ class Api:
         :param provider_id:
         """
         path = f'/indicator/{provider}/{provider_id}'
-        payload = {'ApiKey': self.api_key}
-        return json_normalize(self.fetch(path, payload)).T
+        return json_normalize(self.fetch(path)).T
     
     def providers(self):
         path = '/providers'
-        payload = {'ApiKey': self.api_key}
-        return self.fetch(path,payload)
+        return self.fetch(path)
 
     def analysis_jobs(self):
         path = '/analysisjobs'
-        payload = {'ApiKey': self.api_key}
-        return self.fetch(path,payload)
+        return self.fetch(path)
     
     def search(self, query):
         path = '/search'
-        payload = {'ApiKey': self.api_key,'Query': query}
-        results = self.fetch(path,payload)
-        return json_normalize(data = results['Results'])
+        payload = {'Query': query}
+        results = self.fetch(path, payload)
+        return json_normalize(data=results['Results'])
 
     def model(self, model_id):
         path = f'/rawmodel/{model_id}'
-        payload = {'ApiKey': self.api_key}
-        return self.fetch(path, payload)
+        return self.fetch(path)
 
 
 def main():
