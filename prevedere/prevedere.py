@@ -6,7 +6,7 @@ from pandas.io.json import json_normalize
 class Api:
     API_KEY = ""
 
-    def __init__(self, api_key :str = API_KEY):
+    def __init__(self, api_key: str = API_KEY):
         self.api_key = api_key
 
     def fetch(self, path: str, payload: dict) -> dict:
@@ -14,17 +14,28 @@ class Api:
         r = requests.get(url, params=payload)
         return r.json()
     
-    def indicator_series(self, provider: str, provider_id: str, freq='Monthly': str, calculation=None: str, offset=0: int, verbose=False: bool) -> df:
+    def indicator_series(self,
+                         provider: str,
+                         provider_id: str,
+                         freq: str = 'Monthly',
+                         calculation: str = None, 
+                         offset: int = 0,
+                         verbose: bool = False) -> pd.DataFrame:
         """
         Create a pandas dataframe with data from the API.
 
-        :param provider: Hexidecimal code for a data provider
+        :param provider: Code for a data provider, can be hexidecimal or abbreviated name.
         :type provider: str
 
-        :param freq: Frequency of indicator to retrieve ("Annual","SemiAnnual","Quarterly","Monthly","BiWeekly","Weekly","Daily")
+        :param provider_id: Specific ProviderID for the indicator.
+        :type provider_id: str
+
+        :param freq: Frequency of indicator to retrieve
+        ("Annual","SemiAnnual","Quarterly","Monthly","BiWeekly","Weekly","Daily")
         :type freq: str
         
-        :param calculation: Calculation to transform the indicator ("None","PeriodOverPeriod","YearOverYear","ThreePeriodMoving","FivePeriodMoving","ThreePeriodYearOverYear")
+        :param calculation: Calculation to transform the indicator
+        ("None","PeriodOverPeriod","YearOverYear","ThreePeriodMoving","FivePeriodMoving","ThreePeriodYearOverYear")
         :type calculation: string
 
         :param offset: Number of periods to offset
@@ -34,7 +45,7 @@ class Api:
         :type verbose: bool
         """
         path = f'/indicator/series/{provider}/{provider_id}'
-        payload = {'ApiKey': self.api_key,'Frequency': freq, 'Offset': offset, "Calculation": calculation}
+        payload = {'ApiKey': self.api_key, 'Frequency': freq, 'Offset': offset, "Calculation": calculation}
         df = pd.DataFrame(self.fetch(path, payload))
         df.columns = df.columns.str.lower()
 
@@ -56,7 +67,7 @@ class Api:
 
         return df
 
-    def indicator(self, provider: str, provider_id: str) -> df:
+    def indicator(self, provider: str, provider_id: str) -> pd.DataFrame:
         path = f'/indicator/{provider}/{provider_id}'
         payload = {'ApiKey': self.api_key}
         return json_normalize(self.fetch(path, payload)).T
@@ -64,26 +75,29 @@ class Api:
     def providers(self) -> dict:
         path = '/providers'
         payload = {'ApiKey': self.api_key}
-        return self.fetch(path,payload)
+        return self.fetch(path, payload)
 
     def analysis_jobs(self) -> dict:
         path = '/analysisjobs'
         payload = {'ApiKey': self.api_key}
-        return self.fetch(path,payload)
+        return self.fetch(path, payload)
     
-    def search(self, query: str) -> df:
+    def search(self, query: str) -> pd.DataFrame:
         path = '/search'
-        payload = {'ApiKey': self.api_key,'Query': query}
-        results = self.fetch(path,payload)
-        return json_normalize(data = results['Results'])
+        payload = {'ApiKey': self.api_key, 'Query': query}
+        results = self.fetch(path, payload)
+        return json_normalize(data=results['Results'])
 
     def model(self, model_id: str) -> dict:
         path = f'/rawmodel/{model_id}'
         payload = {'ApiKey': self.api_key}
         return self.fetch(path, payload)
 
+
 def main():
     pass
 
+
 if __name__ == '__main__':
     main()
+
