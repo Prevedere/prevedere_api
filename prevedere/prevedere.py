@@ -6,7 +6,7 @@ from pandas.io.json import json_normalize
 class Api:
     API_KEY = ""
 
-    def __init__(self, api_key=API_KEY: str):
+    def __init__(self, api_key :str = API_KEY):
         self.api_key = api_key
 
     def fetch(self, path: str, payload: dict) -> dict:
