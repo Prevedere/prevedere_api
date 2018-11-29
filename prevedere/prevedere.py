@@ -18,7 +18,7 @@ class Api:
                          provider: str,
                          provider_id: str,
                          freq: str = 'Monthly',
-                         calculation: str = None, 
+                         calculation: str = None,
                          offset: int = 0,
                          verbose: bool = False) -> pd.DataFrame:
         """
