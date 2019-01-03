@@ -76,10 +76,6 @@ class Api:
     def providers(self) -> dict:
         path = '/provider'
         return self.fetch(path)
-
-    def analysis_jobs(self) -> dict:
-        path = '/analysisjobs'
-        return self.fetch(path)
     
     def search(self, query: str) -> pd.DataFrame:
         path = '/search'
