@@ -13,6 +13,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
     url="https://github.com/prevedere/prevedere_api",
+    install_requires=[
+        'requests',
+    ],
     classifiers=[
         "Programming Language :: Python :: 3.6",
         "License :: Free To Use But Restricted",
