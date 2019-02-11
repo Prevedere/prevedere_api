@@ -1,7 +1,7 @@
 # prevedere-api
 
 prevedere-api provides the ability to access retrieve indicator series data, as well as other information.
-For full documentation, go to the [Prevedere API Metadata](https://api.prevedere.com/metadata/) page.
+For full documentation, go to the [Prevedere Swagger API GUI](https://api.prevedere.com/swagger) page.
 
 # Installation
 `pip install prevedere-api`
