@@ -10,7 +10,7 @@ class Api:
         self.api_key = api_key
 
     def fetch(self, path: str, payload: dict = {}) -> dict:
-        url = f'https://api.prevedere.com{path}'
+        url = f'https://api-prod-prevedere.azurewebsites.net{path}'
         payload['ApiKey'] = self.api_key
         r = requests.get(url, params=payload)
         return r.json()
@@ -73,11 +73,7 @@ class Api:
         return json_normalize(self.fetch(path)).T
     
     def providers(self) -> dict:
-        path = '/providers'
-        return self.fetch(path)
-
-    def analysis_jobs(self) -> dict:
-        path = '/analysisjobs'
+        path = '/provider'
         return self.fetch(path)
     
     def search(self, query: str) -> pd.DataFrame:
