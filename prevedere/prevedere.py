@@ -36,7 +36,8 @@ class Api:
         :type freq: str
 
         :param calculation: Calculation to transform the indicator
-        ("None","PeriodOverPeriod","YearOverYear","ThreePeriodMoving","FivePeriodMoving","ThreePeriodYearOverYear")
+        ("None","PeriodOverPeriod","YearOverYear","ThreePeriodMoving",
+        "FivePeriodMoving","ThreePeriodYearOverYear")
         :type calculation: string
 
         :param offset: Number of periods to offset
