@@ -11,7 +11,6 @@ class Api:
 
     def fetch(self, path: str, payload: dict = {}) -> dict:
         url = f'https://api-prod-prevedere.azurewebsites.net{path}'
-        print(url)
         payload['ApiKey'] = self.api_key
         r = requests.get(url, params=payload)
         return r.json()
