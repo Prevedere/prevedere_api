@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.2 - 2019-02-11
+### Changed
+- No longer requires Pandas. API calls return JSON formatted data.
+- Added try/except clause for HTTP requests.
+
 ## 0.1.1 - 2018-11-29
 ### Added
 - CHANGELOG.md
