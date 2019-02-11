@@ -10,7 +10,7 @@ class Api:
         self.api_key = api_key
 
     def fetch(self, path: str, payload: dict = {}) -> dict:
-        url = f'https://api-prod-prevedere.azurewebsites.net{path}'
+        url = f'https://api.prevedere.com{path}'
         print(url)
         payload['ApiKey'] = self.api_key
         r = requests.get(url, params=payload)
@@ -87,10 +87,8 @@ class Api:
         path = f'/rawmodel/{model_id}'
         return self.fetch(path)
 
-
 def main():
     pass
-
 
 if __name__ == '__main__':
     main()
