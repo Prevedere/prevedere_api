@@ -63,7 +63,7 @@ class Api:
         payload = {'Query': query}
         return self.fetch(path, payload)
 
-    def model(self, model_id: str) -> dict:
+    def raw_model(self, model_id: str) -> dict:
         path = f'/rawmodel/{model_id}'
         return self.fetch(path)
 
