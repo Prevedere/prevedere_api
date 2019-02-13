@@ -1,7 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.2 - 2019-02-11
+## 0.3.0 - 2019-02-13
+### Added
+- Added new endpoints: `forecast`, `correlation`, and `workbench`.
+### Changed
+- Minor refactoring
+
+## 0.2.0 - 2019-02-11
 ### Changed
 - No longer requires Pandas. API calls return JSON formatted data.
 - Added try/except clause for HTTP requests.
