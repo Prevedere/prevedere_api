@@ -7,16 +7,22 @@ class Api:
     def __init__(self, api_key: str = API_KEY):
         self.api_key = api_key
 
-    def fetch(self, path: str, payload: dict = {}) -> dict:
-        url = f'https://api.prevedere.com{path}'
+    def fetch(self, path: str, payload: dict = None) -> dict:
+        if payload is None:
+            payload = {}
         payload['ApiKey'] = self.api_key
-
+        url = f'https://api.prevedere.com{path}'
         try:
             r = requests.get(url, params=payload)
             r.raise_for_status()
-            return r.json()
         except requests.exceptions.RequestException as err:
             print(err)
+        else:
+            return r.json()
+
+    def indicator(self, provider: str, provider_id: str) -> dict:
+        path = f'/indicator/{provider}/{provider_id}'
+        return self.fetch(path)
 
     def indicator_series(self,
                          provider: str,
@@ -50,12 +56,16 @@ class Api:
         payload = {'Frequency': freq, 'Offset': offset, "Calculation": calculation}
         return self.fetch(path, payload)
 
-    def indicator(self, provider: str, provider_id: str) -> dict:
-        path = f'/indicator/{provider}/{provider_id}'
-        return self.fetch(path)
-
-    def providers(self) -> dict:
-        path = '/provider'
+    def correlation(self,
+                    endog_provider: str,
+                    endog_provider_id: str,
+                    exog_provider: str,
+                    exog_provider_id: str,
+                    frequncy: str = "Monthly",
+                    calculation: str = "ThreePeriodYearOverYear") -> dict:
+        path = (f'/correlation/{endog_provider}/{endog_provider_id}/'
+                f'{exog_provider}/{exog_provider_id}/'
+                f'{frequncy}/{calculation}')
         return self.fetch(path)
 
     def search(self, query: str) -> dict:
@@ -63,8 +73,20 @@ class Api:
         payload = {'Query': query}
         return self.fetch(path, payload)
 
-    def model(self, model_id: str) -> dict:
+    def raw_model(self, model_id: str) -> dict:
         path = f'/rawmodel/{model_id}'
+        return self.fetch(path)
+
+    def forecast(self, model_id: str) -> dict:
+        path = f'/forecast/{model_id}'
+        return self.fetch(path)
+
+    def providers(self) -> dict:
+        path = '/provider'
+        return self.fetch(path)
+
+    def workbench(self, workbench_id: str) -> dict:
+        path = f'/workbench/{workbench_id}'
         return self.fetch(path)
 
 
