@@ -15,9 +15,10 @@ class Api:
         try:
             r = requests.get(url, params=payload)
             r.raise_for_status()
-            return r.json()
         except requests.exceptions.RequestException as err:
             print(err)
+        else:
+            return r.json()
 
     def indicator(self, provider: str, provider_id: str) -> dict:
         path = f'/indicator/{provider}/{provider_id}'
