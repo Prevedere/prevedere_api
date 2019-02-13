@@ -71,6 +71,22 @@ class Api:
         path = f'/rawmodel/{model_id}'
         return self.fetch(path)
 
+    def workbench(self, workbench_id: str) -> dict:
+        path = f'/workbench/{workbench_id}'
+        return self.fetch(path)
+
+    def correlation(self,
+                    endog_provider: str,
+                    endog_provider_id: str,
+                    exog_provider: str,
+                    exog_provider_id: str,
+                    frequncy: str = "Monthly",
+                    calculation: str = "ThreePeriodYearOverYear") -> dict:
+        path = (f'/correlation/{endog_provider}/{endog_provider_id}/'
+                f'{exog_provider}/{exog_provider_id}/'
+                f'{frequncy}/{calculation}')
+        return self.fetch(path)
+
 
 def main():
     pass
