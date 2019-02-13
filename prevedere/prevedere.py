@@ -18,6 +18,10 @@ class Api:
         except requests.exceptions.RequestException as err:
             print(err)
 
+    def indicator(self, provider: str, provider_id: str) -> dict:
+        path = f'/indicator/{provider}/{provider_id}'
+        return self.fetch(path)
+
     def indicator_series(self,
                          provider: str,
                          provider_id: str,
@@ -50,31 +54,6 @@ class Api:
         payload = {'Frequency': freq, 'Offset': offset, "Calculation": calculation}
         return self.fetch(path, payload)
 
-    def indicator(self, provider: str, provider_id: str) -> dict:
-        path = f'/indicator/{provider}/{provider_id}'
-        return self.fetch(path)
-
-    def providers(self) -> dict:
-        path = '/provider'
-        return self.fetch(path)
-
-    def search(self, query: str) -> dict:
-        path = '/search'
-        payload = {'Query': query}
-        return self.fetch(path, payload)
-
-    def forecast(self, model_id: str) -> dict:
-        path = '/search/{model_id}'
-        return self.fetch(path)
-
-    def raw_model(self, model_id: str) -> dict:
-        path = f'/rawmodel/{model_id}'
-        return self.fetch(path)
-
-    def workbench(self, workbench_id: str) -> dict:
-        path = f'/workbench/{workbench_id}'
-        return self.fetch(path)
-
     def correlation(self,
                     endog_provider: str,
                     endog_provider_id: str,
@@ -85,6 +64,31 @@ class Api:
         path = (f'/correlation/{endog_provider}/{endog_provider_id}/'
                 f'{exog_provider}/{exog_provider_id}/'
                 f'{frequncy}/{calculation}')
+        return self.fetch(path)
+
+    def search(self, query: str) -> dict:
+        path = '/search'
+        payload = {'Query': query}
+        return self.fetch(path, payload)
+
+    def raw_model(self, model_id: str) -> dict:
+        path = f'/rawmodel/{model_id}'
+        return self.fetch(path)
+
+    def forecast(self, model_id: str) -> dict:
+        path = '/search/{model_id}'
+        return self.fetch(path)
+
+    def providers(self) -> dict:
+        path = '/provider'
+        return self.fetch(path)
+
+    def workbench(self, workbench_id: str) -> dict:
+        path = f'/workbench/{workbench_id}'
+        return self.fetch(path)
+
+    def workbenches(self) -> dict:
+        path = '/workbenches'
         return self.fetch(path)
 
 
