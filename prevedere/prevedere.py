@@ -78,7 +78,7 @@ class Api:
         return self.fetch(path)
 
     def forecast(self, model_id: str) -> dict:
-        path = f'/search/{model_id}'
+        path = f'/forecast/{model_id}'
         return self.fetch(path)
 
     def providers(self) -> dict:
