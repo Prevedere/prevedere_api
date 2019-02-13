@@ -7,10 +7,11 @@ class Api:
     def __init__(self, api_key: str = API_KEY):
         self.api_key = api_key
 
-    def fetch(self, path: str, payload: dict = {}) -> dict:
-        url = f'https://api.prevedere.com{path}'
+    def fetch(self, path: str, payload: dict = None) -> dict:
+        if payload is None:
+            payload = {}
         payload['ApiKey'] = self.api_key
-
+        url = f'https://api.prevedere.com{path}'
         try:
             r = requests.get(url, params=payload)
             r.raise_for_status()
