@@ -89,10 +89,6 @@ class Api:
         path = f'/workbench/{workbench_id}'
         return self.fetch(path)
 
-    def workbenches(self) -> dict:
-        path = '/workbenches'
-        return self.fetch(path)
-
 
 def main():
     pass
