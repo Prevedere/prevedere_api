@@ -31,7 +31,7 @@ class Api:
                          calculation: str = None,
                          offset: int = 0) -> dict:
         """
-        Create a pandas dataframe with data from the API.
+        Returns a dict object with data from the API.
 
         :param provider: Code for a data provider, can be hexidecimal or abbreviated name.
         :type provider: str
