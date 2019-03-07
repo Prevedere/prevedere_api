@@ -29,6 +29,8 @@ class Api:
                          provider_id: str,
                          freq: str = 'Monthly',
                          calculation: str = None,
+                         start_date: str = None,
+                         end_date: str = None,
                          offset: int = 0) -> dict:
         """
         Create a pandas dataframe with data from the API.
@@ -48,12 +50,22 @@ class Api:
         "FivePeriodMoving","ThreePeriodYearOverYear")
         :type calculation: string
 
+        :param start_date: Start date for indicator in form "YYYY-MM-DD"
+        :type calculation: string
+
+        :param end_date: End date for indicator in form "YYYY-MM-DD"
+        :type calculation: string
+
         :param offset: Number of periods to offset
         :type offset: int
         """
 
         path = f'/indicator/series/{provider}/{provider_id}'
-        payload = {'Frequency': freq, 'Offset': offset, "Calculation": calculation}
+        payload = {'Frequency': freq,
+                   'Offset': offset,
+                   "Calculation": calculation,
+                   "StartDate": start_date,
+                   "EndDate": end_date}
         return self.fetch(path, payload)
 
     def correlation(self,
