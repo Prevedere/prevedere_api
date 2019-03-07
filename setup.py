@@ -15,6 +15,7 @@ setuptools.setup(
     url="https://github.com/prevedere/prevedere_api",
     install_requires=[
         'requests',
+        'json'
     ],
     classifiers=[
         "Programming Language :: Python :: 3.6",
