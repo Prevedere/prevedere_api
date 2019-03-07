@@ -113,7 +113,7 @@ class Api:
         path = f'/rawmodel/{model_id}'
         return self.fetch(path, payload)
 
-    def forecast(self, model_id: str, as_of_date:str = None) -> dict:
+    def forecast(self, model_id: str, as_of_date: str = None) -> dict:
         """
         :param model_id: UUID for the forecast model
         :type model_id: str
