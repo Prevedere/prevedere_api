@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
     - `raw_model`: `as_of_date` and `exclude_indicators`
     - `forecast`: `as_of_date`
     - `indicator_series`: `start_date` and `end_date`
+- Added `json` package as requirement
 ### Changed
 - HTTP errors now include server response.
 
