@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.3.1 - 2019-03-07
+### Added
+- Added arguments for:
+    - `raw_model`: `as_of_date` and `exclude_indicators`
+    - `forecast`: `as_of_date`
+    - `indicator_series`: `start_date` and `end_date`
+### Changed
+- HTTP errors now include server response.
+
 ## 0.3.0 - 2019-02-13
 ### Added
 - Added new endpoints: `forecast`, `correlation`, and `workbench`.
