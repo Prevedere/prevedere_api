@@ -73,11 +73,11 @@ class Api:
                     endog_provider_id: str,
                     exog_provider: str,
                     exog_provider_id: str,
-                    frequncy: str = "Monthly",
+                    frequency: str = "Monthly",
                     calculation: str = "ThreePeriodYearOverYear") -> dict:
         path = (f'/correlation/{endog_provider}/{endog_provider_id}/'
                 f'{exog_provider}/{exog_provider_id}/'
-                f'{frequncy}/{calculation}')
+                f'{frequency}/{calculation}')
         return self.fetch(path)
 
     def search(self, query: str) -> dict:
