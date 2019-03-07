@@ -28,7 +28,7 @@ class Api:
             try:
                 return r.json()
             except json.decoder.JSONDecodeError as errj:
-                print("JSON Error: ", errj)
+                print("JSON Error:", errj)
 
     def indicator(self, provider: str, provider_id: str) -> dict:
         path = f'/indicator/{provider}/{provider_id}'
@@ -136,14 +136,8 @@ class Api:
 
 
 def main():
-    print('permission error test:')
-    p = Api("d052af238efe4f239982ea7971a9ca6c")
-    print(p.forecast("9f3528ebcf194b5ca645dd99bfe8c25a"))
-
-    print('404 error test')
-    print(p.forecast(""))
+    pass
 
 
 if __name__ == '__main__':
     main()
-
