@@ -1,4 +1,5 @@
 import requests
+import json
 
 
 class Api:
@@ -15,10 +16,19 @@ class Api:
         try:
             r = requests.get(url, params=payload)
             r.raise_for_status()
+        except requests.exceptions.HTTPError as errh:
+            print("Http Error:", errh)
+        except requests.exceptions.ConnectionError as errc:
+            print("Error Connecting:", errc)
+        except requests.exceptions.Timeout as errt:
+            print("Timeout Error:", errt)
         except requests.exceptions.RequestException as err:
-            print(err)
-        else:
-            return r.json()
+            print("Error:", err)
+        finally:
+            try:
+                return r.json()
+            except json.decoder.JSONDecodeError as errj:
+                print("JSON Error: ", errj)
 
     def indicator(self, provider: str, provider_id: str) -> dict:
         path = f'/indicator/{provider}/{provider_id}'
@@ -83,13 +93,38 @@ class Api:
         payload = {'Query': query}
         return self.fetch(path, payload)
 
-    def raw_model(self, model_id: str) -> dict:
-        path = f'/rawmodel/{model_id}'
-        return self.fetch(path)
+    def raw_model(self,
+                  model_id: str,
+                  exclude_indicators: bool = True,
+                  as_of_date: str = None) -> dict:
+        """
+        :param model_id: UUID for the forecast model
+        :type model_id: str
 
-    def forecast(self, model_id: str) -> dict:
+        :param exclude_indicators: Whether to return only indicators used in model, or all associated indicators
+        :type exclude_indicators: bool
+
+        :param as_of_date: Get the model only using data up to the specified date (YYYY-MM-DD). Used for backtesting.
+        :type as_of_date: str
+        """
+
+        payload = {"ExcludeIndicators": exclude_indicators,
+                   "AsOfDate": as_of_date}
+        path = f'/rawmodel/{model_id}'
+        return self.fetch(path, payload)
+
+    def forecast(self, model_id: str, as_of_date:str = None) -> dict:
+        """
+        :param model_id: UUID for the forecast model
+        :type model_id: str
+
+        :param as_of_date: Get the model only using data up to the specified date (YYYY-MM-DD). Used for backtesting.
+        :type as_of_date: str
+        """
+
         path = f'/forecast/{model_id}'
-        return self.fetch(path)
+        payload = {"AsOfDate": as_of_date}
+        return self.fetch(path, payload)
 
     def providers(self) -> dict:
         path = '/provider'
@@ -101,8 +136,14 @@ class Api:
 
 
 def main():
-    pass
+    print('permission error test:')
+    p = Api("d052af238efe4f239982ea7971a9ca6c")
+    print(p.forecast("9f3528ebcf194b5ca645dd99bfe8c25a"))
+
+    print('404 error test')
+    print(p.forecast(""))
 
 
 if __name__ == '__main__':
     main()
+
