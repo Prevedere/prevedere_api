@@ -43,6 +43,8 @@ class Api:
                          end_date: str = None,
                          offset: int = 0) -> dict:
         """
+        Returns a dict object with data from the API.
+
         :param provider: Code for a data provider, can be hexidecimal or abbreviated name.
         :type provider: str
 
