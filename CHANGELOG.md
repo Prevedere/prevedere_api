@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.x.x - 2019-xx-xx
+### Added
+- Authenticates by calling to `/company`
+
 ## 0.3.1 - 2019-03-07
 ### Added
 - Added arguments for:
