@@ -7,6 +7,7 @@ class Api:
 
     def __init__(self, api_key: str = API_KEY):
         self.api_key = api_key
+        self.company = self.fetch('/company')
 
     def fetch(self, path: str, payload: dict = None) -> dict:
         if payload is None:
