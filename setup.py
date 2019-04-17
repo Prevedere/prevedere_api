@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='prevedere-api',
-    version='0.2',
+    version='0.3.1',
     author="Prevedere, Inc.",
     author_email="support@prevedere.com",
     description="API interface for Prevedere Inc. in Python 3.6+",
@@ -13,6 +13,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
     url="https://github.com/prevedere/prevedere_api",
+    install_requires=[
+        'requests',
+    ],
     classifiers=[
         "Programming Language :: Python :: 3.6",
         "License :: Free To Use But Restricted",
