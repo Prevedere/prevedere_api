@@ -1,12 +1,25 @@
 import requests
 import json
-
+import configparser
+import os
+from uuid import UUID
 
 class Api:
-    API_KEY = ""
+    
+    def __init__(self, api_key: str = None):
+        # API can be initialized directly by passing string, if not it looks for prevedere_api.ini in same dir as prevedere.py
+        if api_key is None:
+            config = configparser.ConfigParser()
+            config.read((os.path.join(os.path.abspath(os.path.dirname(__file__)), 'prevedere_api.ini'))) 
+            self.api_key = config['keys']['api key'] 
+        else:
+            self.api_key = api_key
+        
+        try:
+            self.api_key = str(UUID(self.api_key))
+        except ValueError:
+            raise ValueError(f"Specified API key ({self.api_key}) is not a valid API key. Please check the config file or string that was passed to the constructor and try again.")
 
-    def __init__(self, api_key: str = API_KEY):
-        self.api_key = api_key
         self.company = self.fetch('/company')
 
     def fetch(self, path: str, payload: dict = None) -> dict:
