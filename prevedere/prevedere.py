@@ -21,11 +21,10 @@ class Api:
                 raise FileNotFoundError('prevedere_api.ini config file not found in directory: ' + str(Path.cwd())) 
         
         try:
-            self.api_key = str(UUID(self.api_key))
-        except ValueError:
-            raise ValueError(f"Specified API key ({self.api_key}) is not a valid API key. Please check the config file or string that was passed to the constructor and try again.")
-
+            self.api_key = str(UUID(api_key))
         self.company = self.fetch('/company')
+        except (ValueError, TypeError) as e:
+            raise ValueError(f"Specified API key ({api_key}) is not a valid API key. Please check the config file or string that was passed to the constructor and try again.")
 
     def fetch(self, path: str, payload: dict = None) -> dict:
         if payload is None:
