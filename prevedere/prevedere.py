@@ -1,8 +1,8 @@
 import requests
 import json
 import configparser
-import os
 from uuid import UUID
+from pathlib import Path
 
 class Api:
     
