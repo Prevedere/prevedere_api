@@ -11,18 +11,18 @@ class Api:
         if api_key is None:
             filepath = Path.cwd().joinpath('prevedere_api.ini')
             if filepath.is_file():
-            config = configparser.ConfigParser()
-                    config.read(filepath)
-                    try:
-                        api_key = config['keys']['api key']
-                    except KeyError as e:
-                       raise KeyError(f'API key not found in {filepath}: ' + repr(e))
+                config = configparser.ConfigParser()
+                config.read(filepath)
+                try:
+                    api_key = config['keys']['api key']
+                except KeyError as e:
+                    raise KeyError(f'API key not found in {filepath}: ' + repr(e))
         else:
-                raise FileNotFoundError('prevedere_api.ini config file not found in directory: ' + str(Path.cwd())) 
+            raise FileNotFoundError('prevedere_api.ini config file not found in directory: ' + str(Path.cwd())) 
         
         try:
             self.api_key = str(UUID(api_key))
-        self.company = self.fetch('/company')
+            self.company = self.fetch('/company')
         except (ValueError, TypeError) as e:
             raise ValueError(f"Specified API key ({api_key}) is not a valid API key. Please check the config file or string that was passed to the constructor and try again.")
 
