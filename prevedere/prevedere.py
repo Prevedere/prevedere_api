@@ -3,15 +3,22 @@ import json
 import configparser
 from uuid import UUID
 from pathlib import Path, PurePath
+import logging
 
 class Api:
     
     def __init__(self, api_key: str = None):
         # API can be initialized directly by passing string, if not it looks for prevedere_api.ini in current working directory.
         if api_key is None:
-            cwd = Path.cwd()
-            parent = PurePath(__file__).parent
-            filepath = Path(parent.joinpath('prevedere_api.ini'))
+            try:
+                assert PurePath(__file__).name == 'prevedere.py'
+                cwd = PurePath(__file__).parent
+            except AssertionError as e:
+                logging.exception('Api not initialized from prevedere.py')
+                cwd = Path.cwd()
+                logging.exception('Looking for config in' + str(cwd))
+
+            filepath = Path(cwd.joinpath('prevedere_api.ini'))
             if filepath.is_file():
                 config = configparser.ConfigParser()
                 config.read(filepath)
