@@ -173,8 +173,7 @@ class ApiKeyError(ValueError):
         self.api_key = api_key
 
 def main():
-    Api()
-
+    pass
 
 if __name__ == '__main__':
     main()
