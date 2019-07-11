@@ -22,7 +22,7 @@ class Api:
         
         try:
             self.api_key = str(UUID(api_key))
-        self.company = self.fetch('/company')
+            self.company = self.fetch('/company')
         except (ValueError, TypeError) as e:
             raise ValueError(f"Specified API key ({api_key}) is not a valid API key. Please check the config file or string that was passed to the constructor and try again.")
 
