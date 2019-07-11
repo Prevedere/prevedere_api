@@ -164,6 +164,13 @@ class Api:
         path = f'/workbench/{workbench_id}'
         return self.fetch(path)
 
+class ApiKeyError(ValueError):
+    '''Raise when API is improperly formatted or invalid'''
+    def __init__(self, api_key, message=None):
+        if message is None:
+            message = "An error occured with the provided API Key: " + str(api_key)
+        self.message = message 
+        self.api_key = api_key
 
 def main():
     Api()
