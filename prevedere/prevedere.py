@@ -7,7 +7,7 @@ from uuid import UUID
 class Api:
     
     def __init__(self, api_key: str = None):
-        # API can be initialized directly by passing string, if not it looks for prevedere_api.ini in same dir as prevedere.py
+        # API can be initialized directly by passing string, if not it looks for prevedere_api.ini in current working directory.
         if api_key is None:
             filepath = Path.cwd().joinpath('prevedere_api.ini')
             if filepath.is_file():
