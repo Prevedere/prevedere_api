@@ -10,8 +10,10 @@ class Api:
         # API can be initialized directly by passing string, if not it looks for prevedere_api.ini in same dir as prevedere.py
         if api_key is None:
             config = configparser.ConfigParser()
-            config.read((os.path.join(os.path.abspath(os.path.dirname(__file__)), 'prevedere_api.ini'))) 
-            self.api_key = config['keys']['api key'] 
+                    try:
+                        api_key = config['keys']['api key']
+                    except KeyError as e:
+                       raise KeyError(f'API key not found in {filepath}: ' + repr(e))
         else:
             self.api_key = api_key
         
