@@ -17,8 +17,8 @@ class Api:
                     api_key = config['keys']['api key']
                 except KeyError as e:
                     raise KeyError(f'API key not found in {filepath}: ' + repr(e))
-        else:
-            raise FileNotFoundError('prevedere_api.ini config file not found in directory: ' + str(Path.cwd())) 
+            else:
+                raise FileNotFoundError('prevedere_api.ini config file not found in directory: ' + str(Path.cwd())) 
         
         try:
             self.api_key = str(UUID(api_key))
