@@ -14,7 +14,7 @@ class Api:
                 assert PurePath(__file__).name == 'prevedere.py'
                 cwd = PurePath(__file__).parent
             except AssertionError as e:
-                logging.exception('Api not initialized from prevedere.py')
+                logging.exception('Prevedere.Api not initialized from prevedere.py')
                 cwd = Path.cwd()
                 logging.exception('Looking for config in' + str(cwd))
 
@@ -24,16 +24,26 @@ class Api:
                 config.read(filepath)
                 try:
                     api_key = config['keys']['api key']
+                    assert api_key != "1234567890abcdef1234567890abcdef"
                 except KeyError as e:
-                    raise KeyError(f'API key not found in {filepath}: ' + repr(e))
+                    logging.exception(f'API key not found in {filepath}: ' + repr(e))
+                except AssertionError as e:
+                    raise ApiKeyError('Config file found, but API key has not been set. Please change the API key in '+ str(filepath)) from e
+                    logging.exception('Default key not changed.')
             else:
-                raise FileNotFoundError('prevedere_api.ini config file not found in directory: ' + str(filepath.parent)) 
+                raise FileNotFoundError('prevedere_api.ini config file not found in directory: ' + str(filepath.parent))
+                logging.exception('File not found.')
         
         try:
             self.api_key = str(UUID(api_key))
             company = self.fetch('/company')
             if len(company) == 1:
                 self.company = company[0]
+                logging.info('Successfully validated as ' + self.company['Name'])
+        except (TypeError, ValueError, requests.exceptions.HTTPError) as e:
+            raise ApiKeyError(api_key, f"The Specified API key is not valid: {api_key}\n" +\
+            "Please check the config file or string that was passed to the constructor and try again.") from e
+            logging.exception('Invalid key')
 
     def fetch(self, path: str, payload: dict = None) -> dict:
         if payload is None:
@@ -43,20 +53,20 @@ class Api:
         try:
             r = requests.get(url, params=payload)
             r.raise_for_status()
-        except requests.exceptions.HTTPError as errh:
-            print("Http Error:", errh)
-            print(r.json())
-        except requests.exceptions.ConnectionError as errc:
-            print("Error Connecting:", errc)
-        except requests.exceptions.Timeout as errt:
-            print("Timeout Error:", errt)
-        except requests.exceptions.RequestException as err:
-            print("Error:", err)
-        finally:
-            try:
-                return r.json()
-            except json.decoder.JSONDecodeError as errj:
-                print("JSON Error:", errj)
+        except requests.exceptions.HTTPError as e:
+            logging.warn('HTTP Error: ' + repr(r.json()))
+            raise
+        except requests.exceptions.ConnectionError as e:
+            logging.exception('Connection Error')
+        except requests.exceptions.Timeout as e:
+            logging.exception('Timeout Error')
+        except requests.exceptions.RequestException as e:
+            logging.exception('Requests Error')
+
+        try:
+            return r.json()
+        except json.decoder.JSONDecodeError as e:
+            logging.exception("JSON Error")
 
     def indicator(self, provider: str, provider_id: str) -> dict:
         path = f'/indicator/{provider}/{provider_id}'
