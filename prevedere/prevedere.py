@@ -29,10 +29,10 @@ class Api:
                     logging.exception(f'API key not found in {filepath}: ' + repr(e))
                 except AssertionError as e:
                     raise ApiKeyError('Config file found, but API key has not been set. Please change the API key in '+ str(filepath)) from e
-                    logging.exception('Default key not changed.')
+                    logging.exception()
             else:
                 raise FileNotFoundError('prevedere_api.ini config file not found in directory: ' + str(filepath.parent))
-                logging.exception('File not found.')
+                logging.exception()
         
         try:
             self.api_key = str(UUID(api_key))
@@ -41,9 +41,9 @@ class Api:
                 self.company = company[0]
                 logging.info('Successfully validated as ' + self.company['Name'])
         except (TypeError, ValueError, requests.exceptions.HTTPError) as e:
-            raise ApiKeyError(api_key, f"The Specified API key is not valid: {api_key}\n" +\
+            raise ApiKeyError(f"'{api_key}' is not a valid API Key. " +\
             "Please check the config file or string that was passed to the constructor and try again.") from e
-            logging.exception('Invalid key')
+            logging.exception()
 
     def fetch(self, path: str, payload: dict = None) -> dict:
         if payload is None:
@@ -176,11 +176,10 @@ class Api:
 
 class ApiKeyError(ValueError):
     '''Raise when API is improperly formatted or invalid'''
-    def __init__(self, api_key, message=None):
+    def __init__(self, message=None):
         if message is None:
-            message = "An error occured with the provided API Key: " + str(api_key)
+            message = "An error occured with the provided API Key."
         self.message = message 
-        self.api_key = api_key
 
 def main():
     pass
