@@ -2,14 +2,16 @@ import requests
 import json
 import configparser
 from uuid import UUID
-from pathlib import Path
+from pathlib import Path, PurePath
 
 class Api:
     
     def __init__(self, api_key: str = None):
         # API can be initialized directly by passing string, if not it looks for prevedere_api.ini in current working directory.
         if api_key is None:
-            filepath = Path.cwd().joinpath('prevedere_api.ini')
+            cwd = Path.cwd()
+            parent = PurePath(__file__).parent
+            filepath = Path(parent.joinpath('prevedere_api.ini'))
             if filepath.is_file():
                 config = configparser.ConfigParser()
                 config.read(filepath)
@@ -157,7 +159,7 @@ class Api:
 
 
 def main():
-    pass
+    Api()
 
 
 if __name__ == '__main__':
