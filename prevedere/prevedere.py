@@ -9,13 +9,16 @@ class Api:
     def __init__(self, api_key: str = None):
         # API can be initialized directly by passing string, if not it looks for prevedere_api.ini in same dir as prevedere.py
         if api_key is None:
+            filepath = Path.cwd().joinpath('prevedere_api.ini')
+            if filepath.is_file():
             config = configparser.ConfigParser()
+                    config.read(filepath)
                     try:
                         api_key = config['keys']['api key']
                     except KeyError as e:
                        raise KeyError(f'API key not found in {filepath}: ' + repr(e))
         else:
-            self.api_key = api_key
+                raise FileNotFoundError('prevedere_api.ini config file not found in directory: ' + str(Path.cwd())) 
         
         try:
             self.api_key = str(UUID(self.api_key))
