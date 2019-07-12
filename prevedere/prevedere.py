@@ -8,7 +8,11 @@ import logging
 class Api:
     
     def __init__(self, api_key: str = None):
-        # API can be initialized directly by passing string, if not it looks for prevedere_api.ini in current working directory.
+        """
+        API can be initialized directly by passing string, if not it looks for prevedere_api.ini in current working directory.
+        Copy the prevedere_api.ini.example file and remove `.example` from the end.
+        Change the api key to your key.
+        """
         if api_key is None:
             try:
                 assert PurePath(__file__).name == 'prevedere.py'
