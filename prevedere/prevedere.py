@@ -1,26 +1,53 @@
 import requests
 import json
 import configparser
-import os
 from uuid import UUID
+from pathlib import Path, PurePath
+import logging
 
 class Api:
     
     def __init__(self, api_key: str = None):
-        # API can be initialized directly by passing string, if not it looks for prevedere_api.ini in same dir as prevedere.py
+        """
+        API can be initialized directly by passing string, if not it looks for prevedere_api.ini in current working directory.
+        Copy the prevedere_api.ini.example file and remove `.example` from the end.
+        Change the api key to your key.
+        """
         if api_key is None:
-            config = configparser.ConfigParser()
-            config.read((os.path.join(os.path.abspath(os.path.dirname(__file__)), 'prevedere_api.ini'))) 
-            self.api_key = config['keys']['api key'] 
-        else:
-            self.api_key = api_key
+            try:
+                assert PurePath(__file__).name == 'prevedere.py'
+                cwd = PurePath(__file__).parent
+            except AssertionError as e:
+                logging.exception('Prevedere.Api not initialized from prevedere.py')
+                cwd = Path.cwd()
+                logging.exception('Looking for config in' + str(cwd))
+
+            filepath = Path(cwd.joinpath('prevedere_api.ini'))
+            if filepath.is_file():
+                config = configparser.ConfigParser()
+                config.read(filepath)
+                try:
+                    api_key = config['keys']['api key']
+                    assert api_key != "1234567890abcdef1234567890abcdef"
+                except KeyError as e:
+                    logging.exception(f'API key not found in {filepath}: ' + repr(e))
+                except AssertionError as e:
+                    raise ApiKeyError('Config file found, but API key has not been set. Please change the API key in '+ str(filepath)) from e
+                    logging.exception()
+            else:
+                raise FileNotFoundError('prevedere_api.ini config file not found in directory: ' + str(filepath.parent))
+                logging.exception()
         
         try:
-            self.api_key = str(UUID(self.api_key))
-        except ValueError:
-            raise ValueError(f"Specified API key ({self.api_key}) is not a valid API key. Please check the config file or string that was passed to the constructor and try again.")
-
-        self.company = self.fetch('/company')
+            self.api_key = str(UUID(api_key))
+            company = self.fetch('/company')
+            if len(company) == 1:
+                self.company = company[0]
+                logging.info('Successfully validated as ' + self.company['Name'])
+        except (TypeError, ValueError, requests.exceptions.HTTPError) as e:
+            raise ApiKeyError(f"'{api_key}' is not a valid API Key. " +\
+            "Please check the config file or string that was passed to the constructor and try again.") from e
+            logging.exception()
 
     def fetch(self, path: str, payload: dict = None) -> dict:
         if payload is None:
@@ -30,19 +57,20 @@ class Api:
         try:
             r = requests.get(url, params=payload)
             r.raise_for_status()
-        except requests.exceptions.HTTPError as errh:
-            print("Http Error:", errh)
-        except requests.exceptions.ConnectionError as errc:
-            print("Error Connecting:", errc)
-        except requests.exceptions.Timeout as errt:
-            print("Timeout Error:", errt)
-        except requests.exceptions.RequestException as err:
-            print("Error:", err)
-        finally:
-            try:
-                return r.json()
-            except json.decoder.JSONDecodeError as errj:
-                print("JSON Error:", errj)
+        except requests.exceptions.HTTPError as e:
+            logging.warn('HTTP Error: ' + repr(r.json()))
+            raise
+        except requests.exceptions.ConnectionError as e:
+            logging.exception('Connection Error')
+        except requests.exceptions.Timeout as e:
+            logging.exception('Timeout Error')
+        except requests.exceptions.RequestException as e:
+            logging.exception('Requests Error')
+
+        try:
+            return r.json()
+        except json.decoder.JSONDecodeError as e:
+            logging.exception("JSON Error")
 
     def indicator(self, provider: str, provider_id: str) -> dict:
         path = f'/indicator/{provider}/{provider_id}'
@@ -150,10 +178,15 @@ class Api:
         path = f'/workbench/{workbench_id}'
         return self.fetch(path)
 
+class ApiKeyError(ValueError):
+    '''Raise when API is improperly formatted or invalid'''
+    def __init__(self, message=None):
+        if message is None:
+            message = "An error occured with the provided API Key."
+        self.message = message 
 
 def main():
     pass
-
 
 if __name__ == '__main__':
     main()
