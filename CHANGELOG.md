@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Authenticates by calling to `/company`
 
+## 0.3.2 - 2019-07-11
+### Added
+- Use `prevedere_api.ini` in the installation directory to store the api_key
+- Use `logging.exception` instead of printing exceptions
+### Changed
+- Improved error handling
+
 ## 0.3.1 - 2019-03-07
 ### Added
 - Added arguments for:
