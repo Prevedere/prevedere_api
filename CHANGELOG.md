@@ -1,12 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.x.x - 2019-xx-xx
-### Added
-- Authenticates by calling to `/company`
-
 ## 0.3.2 - 2019-07-11
 ### Added
+- Authenticates by calling to `/company`
 - Use `prevedere_api.ini` in the installation directory to store the api_key
 - Use `logging.exception` instead of printing exceptions
 ### Changed
