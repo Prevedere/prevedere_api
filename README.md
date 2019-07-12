@@ -8,6 +8,14 @@ For full documentation, go to the [Prevedere Swagger API GUI](https://api.preved
 
 # Use
 
+## Authentication
+There is a file called `prevedere_api.ini.example` that can be used to store your API key. To use it, make a copy of the file, remove `.example` from the filename, and replace the API key in the file with your own. If you cannot find the file, initializing `prevedere.Api()` will produce the expected location of the .ini file.
+Once completed, you will no longer have to enter in your API key when creating a connection to the Prevedere API.
+```
+from prevedere import Api
+p = Api()
+```
+
 ## Endpoints
 - `indicator`: returns basic information about an indicator.
 - `indicator_series`: returns the data for an indicator.
