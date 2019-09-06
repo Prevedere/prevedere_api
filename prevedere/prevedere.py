@@ -7,7 +7,7 @@ import logging
 
 class Api:
     
-    def __init__(self, api_key: str = None):
+    def __init__(self, api_key: str = None, base: str = None):
         """
         API can be initialized directly by passing string, if not it looks for prevedere_api.ini in current working directory.
         Copy the prevedere_api.ini.example file and remove `.example` from the end.
@@ -38,6 +38,12 @@ class Api:
                 raise FileNotFoundError('prevedere_api.ini config file not found in directory: ' + str(filepath.parent))
                 logging.exception()
         
+        if base:
+            self.base = base
+            logging.info(f'Using "{self.base}" instead of "api".')
+        else:
+            self.base = 'api'
+        
         try:
             self.api_key = str(UUID(api_key))
             context = self.fetch('/context')
@@ -52,7 +58,7 @@ class Api:
         if payload is None:
             payload = {}
         payload['ApiKey'] = self.api_key
-        url = f'https://api.prevedere.com{path}'
+        url = f'https://{self.base}.prevedere.com{path}'
         try:
             r = requests.get(url, params=payload)
             r.raise_for_status()
