@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.4.0 - 2019-09-06
+### Added
+- Can now use a difference base url instead of 'api' using a new argument 'base'
+### Changed
+- Authentication of api key context is improved and should be faster
+
 ## 0.3.2 - 2019-07-11
 ### Added
 - Authenticates by calling to `/company`
