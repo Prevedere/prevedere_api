@@ -40,10 +40,9 @@ class Api:
         
         try:
             self.api_key = str(UUID(api_key))
-            company = self.fetch('/company')
-            if len(company) == 1:
-                self.company = company[0]
-                logging.info('Successfully validated as ' + self.company['Name'])
+            context = self.fetch('/context')
+            self.company = context['Company']['Prefix']
+            logging.info(f"Hello {context['User']['FirstName']}, you're now connected to the {self.company} instance.")
         except (TypeError, ValueError, requests.exceptions.HTTPError) as e:
             raise ApiKeyError(f"'{api_key}' is not a valid API Key. " +\
             "Please check the config file or string that was passed to the constructor and try again.") from e
