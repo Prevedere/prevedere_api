@@ -40,15 +40,14 @@ class Api:
         
         if base:
             self.base = base
-            logging.info(f'Using "{self.base}" instead of "api".')
+            logging.debug(f'Using "{self.base}" instead of "api."')
         else:
             self.base = 'api'
         
         try:
             self.api_key = str(UUID(api_key))
-            context = self.fetch('/context')
-            self.company = context['Company']['Prefix']
-            logging.info(f"Hello {context['User']['FirstName']}, you're now connected to the {self.company} instance.")
+            self.context = self.fetch('/context')
+            logging.debug(f"Hello {self.context['User']['FirstName']}, you're now connected to the {self.context['Company']['Prefix']} instance.")
         except (TypeError, ValueError, requests.exceptions.HTTPError) as e:
             raise ApiKeyError(f"'{api_key}' is not a valid API Key. " +\
             "Please check the config file or string that was passed to the constructor and try again.") from e
