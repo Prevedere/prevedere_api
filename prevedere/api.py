@@ -193,7 +193,6 @@ class Api:
         return self.fetch(path)
 
     # POST
-
     def get_integrations(self):
         return self.fetch('/clientdimensions')
     
@@ -242,7 +241,6 @@ class Api:
         """
         )
 
-
     def validate_data(
         self,
         data: str,
@@ -287,13 +285,13 @@ class Api:
         self.check_post_response(response)
 
 
-
 class ApiKeyError(ValueError):
     '''Raise when API is improperly formatted or invalid'''
     def __init__(self, message=None):
         if message is None:
             message = "An error occured with the provided API Key."
         self.message = message 
+
 
 def main():
     pass
