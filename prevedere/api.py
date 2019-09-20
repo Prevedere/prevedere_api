@@ -19,7 +19,6 @@ class Api:
         Change the api key to your key.
         """
         if log:
-            self.log = log
             if type(log) == int:
                 level = log
             else:
