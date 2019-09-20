@@ -285,8 +285,8 @@ class Api:
         self,
         data: str,
         client_dimension_group_id: str,
-        should_delete_existing_records: str = 'true',
-        should_replace_if_record_exists: str = 'true'
+        should_delete_existing_records: bool = True,
+        should_replace_if_record_exists: bool = True
     ):
         payload={
             # If false, becomes additive to existing records
