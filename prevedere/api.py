@@ -251,6 +251,7 @@ class Api:
                     },
             ]
         :type fields: A list or set of keys in each record.
+            e.g. set(['Region', 'Product', 'Date', 'Measure', 'Value'])
         """
         s = io.StringIO(newline='')
         writer = csv.DictWriter(s, fieldnames=fields)
