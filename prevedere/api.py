@@ -4,6 +4,7 @@ import io
 import json
 import logging
 from pathlib import Path, PurePath
+import re
 from uuid import UUID
 
 import requests
@@ -11,12 +12,22 @@ import requests
 
 class Api:
     
-    def __init__(self, api_key: str = None, base: str = None):
+    def __init__(self, api_key: str = None, base: str = None, log=None):
         """
         API can be initialized directly by passing string, if not it looks for prevedere_api.ini in current working directory.
         Copy the prevedere_api.ini.example file and remove `.example` from the end.
         Change the api key to your key.
         """
+        if log:
+            self.log = log
+            if type(log) == int:
+                level = log
+            else:
+                level=logging.INFO
+            logging.basicConfig(format='%(levelname)s-%(message)s', level=level)
+        else:
+            self.log = False
+
         if api_key is None:
             try:
                 assert PurePath(__file__).name == 'api.py'
@@ -51,7 +62,7 @@ class Api:
         try:
             self.api_key = str(UUID(api_key))
             self.context = self.fetch('/context')
-            logging.debug(f"Hello {self.context['User']['FirstName']}, you're now connected to the {self.context['Company']['Prefix']} instance.")
+            logging.info(f"{self.context['User']['FirstName']} connected to the {self.context['Company']['Prefix']} instance.")
         except (TypeError, ValueError, requests.exceptions.HTTPError) as e:
             raise ApiKeyError(f"'{api_key}' is not a valid API Key. " +\
             "Please check the config file or string that was passed to the constructor and try again.") from e
@@ -82,6 +93,13 @@ class Api:
             logging.exception('Requests Error')
 
         try:
+            if self.log:
+                try:
+                    endpoint = re.search('^\/\w*\/?', path)[0]
+                except:
+                    endpoint = 'endpoint'
+                else:
+                    logging.info(f'{method} request to {endpoint} took {r.elapsed.total_seconds():.2f} seconds (status code: {r.status_code})')
             return r.json()
         except json.decoder.JSONDecodeError as e:
             logging.exception("JSON Error")
@@ -233,7 +251,7 @@ class Api:
     @staticmethod
     def check_post_response(response):
         if response['Success'] == True:
-            print('POST suceeded.')
+            logging.info('POST suceeded.')
         else:
             raise requests.exceptions.RequestException(f"""
         POST Failed: 
