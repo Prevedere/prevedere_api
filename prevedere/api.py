@@ -24,6 +24,7 @@ class Api:
                 level = log
             else:
                 level=logging.INFO
+            self.log = log
             logging.basicConfig(format='%(levelname)s-%(message)s', level=level)
         else:
             self.log = False
