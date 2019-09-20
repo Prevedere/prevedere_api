@@ -234,6 +234,22 @@ class Api:
         as well as the fields, "Measure", "Date", and "Value".
         Date is in format 'YYYY-MM-DD'
         :param data: A list of records with {'key':'value'} entries.
+            e.g. [
+                {
+                    'Region':'East', 
+                    'Product':'Product 1', 
+                    'Date': '2019-09-01', 
+                    'Measure':'Sales', 
+                    'Value':100
+                    },
+                {
+                    'Region':'East', 
+                    'Product':'Product 1', 
+                    'Date': '2019-10-01', 
+                    'Measure':'Sales', 
+                    'Value':200
+                    },
+            ]
         :type fields: A list or set of keys in each record.
         """
         s = io.StringIO(newline='')
