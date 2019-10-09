@@ -43,6 +43,8 @@ class Api:
                 config.read(filepath)
                 try:
                     api_key = config['keys']['api key']
+                    if 'base' in config['keys']:
+                        base = config['keys']['base']
                     assert api_key != "1234567890abcdef1234567890abcdef"
                 except KeyError as e:
                     logging.exception(f'API key not found in {filepath}: ' + repr(e))
