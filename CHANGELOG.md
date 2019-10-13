@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.5.1 - 2019-10-13
+### Changed
+- Logging and exception handling improvements
+
 ## 0.5.0 - 2019-09-20
 ### Added
 - Uploading data with POST requests. Requires:

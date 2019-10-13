@@ -11,8 +11,12 @@ import requests
 
 
 class Api:
-    
-    def __init__(self, api_key: str = None, base: str = None, log=None):
+    """
+    TODO:
+    - Add information about what an API key is, how to get one, and how to use Swagger 
+    - Reference PEP standards for class docstrings
+    """    
+    def __init__(self, api_key: str = None, base: str = None, log: bool = None):
         """
         API can be initialized directly by passing string, if not it looks for prevedere_api.ini in current working directory.
         Copy the prevedere_api.ini.example file and remove `.example` from the end.
@@ -24,9 +28,11 @@ class Api:
             else:
                 level=logging.INFO
             self.log = log
-            logging.basicConfig(format='%(levelname)s-%(message)s', level=level)
         else:
             self.log = False
+            level = logging.WARNING
+        logging.basicConfig(format='%(levelname)s-%(message)s', level=level)
+
 
         if api_key is None:
             try:
@@ -64,7 +70,6 @@ class Api:
         try:
             self.api_key = str(UUID(api_key))
             self.context = self.fetch('/context')
-            logging.debug(f"{self.context['User']['FirstName']} connected to the {self.context['Company']['Prefix']} instance.")
         except (TypeError, ValueError, requests.exceptions.HTTPError) as e:
             raise ApiKeyError(f"'{api_key}' is not a valid API Key. " +\
             "Please check the config file or string that was passed to the constructor and try again.") from e
@@ -85,16 +90,7 @@ class Api:
             elif method=='POST':
                 r = requests.post(f'{self.url}{path}', params=payload, data=data)
             r.raise_for_status()
-        except requests.exceptions.HTTPError as e:
-            raise Exception('HTTP Error: ' + repr(r.json()))
-        except requests.exceptions.ConnectionError as e:
-            logging.exception('Connection Error')
-        except requests.exceptions.Timeout as e:
-            logging.exception('Timeout Error')
-        except requests.exceptions.RequestException as e:
-            logging.exception('Requests Error')
 
-        try:
             if self.log:
                 try:
                     endpoint = re.search('^\/\w*\/?', path)[0]
@@ -103,8 +99,17 @@ class Api:
                 else:
                     logging.info(f'{method} request to {endpoint} took {r.elapsed.total_seconds():.2f} seconds (status code: {r.status_code})')
             return r.json()
+
+        except requests.exceptions.HTTPError as e:
+            logging.exception(r.text)
+        except requests.exceptions.ConnectionError as e:
+            logging.exception('Connection Error')
+        except requests.exceptions.Timeout as e:
+            logging.exception('Timeout Error')
+        except requests.exceptions.RequestException as e:
+            logging.exception('Requests Error')              
         except json.decoder.JSONDecodeError as e:
-            logging.exception("JSON Error")
+            logging.exception("Could not read response as JSON")
 
     def indicator(self, provider: str, provider_id: str) -> dict:
         path = f'/indicator/{provider}/{provider_id}'
@@ -229,10 +234,10 @@ class Api:
         return set(fields)
 
     @staticmethod
-    def make_csv(data: list, fields: set):
+    def make_csv(data: list, fields: set) -> str:
         """
         Turns data into a CSV string to be uploaded.
-        Data must contain the specific dimensions for the integration job,
+        Data must contain the **specific dimensions** for the integration job,
         as well as the fields, "Measure", "Date", and "Value".
         Date is in format 'YYYY-MM-DD'
         :param data: A list of records with {'key':'value'} entries.
@@ -254,6 +259,10 @@ class Api:
             ]
         :type fields: A list or set of keys in each record.
             e.g. set(['Region', 'Product', 'Date', 'Measure', 'Value'])
+        
+        returns: CSV string
+
+        example: Api.make_csv(data=[], fields=[])
         """
         s = io.StringIO(newline='')
         writer = csv.DictWriter(s, fieldnames=fields)
