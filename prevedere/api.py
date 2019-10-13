@@ -64,7 +64,6 @@ class Api:
         try:
             self.api_key = str(UUID(api_key))
             self.context = self.fetch('/context')
-            logging.debug(f"{self.context['User']['FirstName']} connected to the {self.context['Company']['Prefix']} instance.")
         except (TypeError, ValueError, requests.exceptions.HTTPError) as e:
             raise ApiKeyError(f"'{api_key}' is not a valid API Key. " +\
             "Please check the config file or string that was passed to the constructor and try again.") from e
