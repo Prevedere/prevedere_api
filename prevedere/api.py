@@ -16,7 +16,7 @@ class Api:
     - Add information about what an API key is, how to get one, and how to use Swagger 
     - Reference PEP standards for class docstrings
     """    
-    def __init__(self, api_key: str = None, base: str = None, log: bool =None):
+    def __init__(self, api_key: str = None, base: str = None, log: bool = None):
         """
         API can be initialized directly by passing string, if not it looks for prevedere_api.ini in current working directory.
         Copy the prevedere_api.ini.example file and remove `.example` from the end.
@@ -28,9 +28,11 @@ class Api:
             else:
                 level=logging.INFO
             self.log = log
-            logging.basicConfig(format='%(levelname)s-%(message)s', level=level)
         else:
             self.log = False
+            level = logging.WARNING
+        logging.basicConfig(format='%(levelname)s-%(message)s', level=level)
+
 
         if api_key is None:
             try:
