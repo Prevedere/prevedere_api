@@ -1,7 +1,7 @@
 # prevedere-api
 
 prevedere-api is a simple API for making HTTP requests to the Prevedere application. Requires an API key.
-For full documentation, go to the [Prevedere Swagger API GUI](https://api.prevedere.com/swagger).
+For full documentation, go to the [Prevedere Swagger API GUI](https://api.prevedere.com/).
 
 # Installation
 `pip install prevedere-api`
