@@ -35,3 +35,7 @@ provider_id = "a123"
 p = prevedere.Api(api_key)
 p.indicator_series(provider, provider_id)
 ```
+
+TODO:
+- Example dataset to play with, especially for uploading data
+- Add documentation for each function
