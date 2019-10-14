@@ -1,9 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.5.1 - 2019-10-13
+### Changed
+- Logging and exception handling improvements
+
+## 0.5.0 - 2019-09-20
+### Added
+- Uploading data with POST requests. Requires:
+ - Integration job to be setup by support@prevedere.com
+ - 'client_dimension_group_id' for the integration
+### Changed
+- Can now set log level with True or the logging level integer
+- Logging also returns how long each request took and to which endpoint
+- prevedere.py is renamed to api.py for clarity
+
 ## 0.4.0 - 2019-09-06
 ### Added
-- Can now use a difference base url instead of 'api' using a new argument 'base'
+- Can now use a different base url instead of 'api' using a new argument 'base'
 ### Changed
 - Authentication of api key context is improved and should be faster
 

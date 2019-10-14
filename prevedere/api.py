@@ -1,21 +1,42 @@
-import requests
-import json
 import configparser
-from uuid import UUID
-from pathlib import Path, PurePath
+import csv
+import io
+import json
 import logging
+from pathlib import Path, PurePath
+import re
+from uuid import UUID
+
+import requests
+
 
 class Api:
-    
-    def __init__(self, api_key: str = None, base: str = None):
+    """
+    TODO:
+    - Add information about what an API key is, how to get one, and how to use Swagger 
+    - Reference PEP standards for class docstrings
+    """    
+    def __init__(self, api_key: str = None, base: str = None, log: bool = None):
         """
         API can be initialized directly by passing string, if not it looks for prevedere_api.ini in current working directory.
         Copy the prevedere_api.ini.example file and remove `.example` from the end.
         Change the api key to your key.
         """
+        if log:
+            if type(log) == int:
+                level = log
+            else:
+                level=logging.INFO
+            self.log = log
+        else:
+            self.log = False
+            level = logging.WARNING
+        logging.basicConfig(format='%(levelname)s-%(message)s', level=level)
+
+
         if api_key is None:
             try:
-                assert PurePath(__file__).name == 'prevedere.py'
+                assert PurePath(__file__).name == 'api.py'
                 cwd = PurePath(__file__).parent
             except AssertionError as e:
                 logging.exception('Prevedere.Api not initialized from prevedere.py')
@@ -28,6 +49,8 @@ class Api:
                 config.read(filepath)
                 try:
                     api_key = config['keys']['api key']
+                    if 'base' in config['keys']:
+                        base = config['keys']['base']
                     assert api_key != "1234567890abcdef1234567890abcdef"
                 except KeyError as e:
                     logging.exception(f'API key not found in {filepath}: ' + repr(e))
@@ -47,34 +70,46 @@ class Api:
         try:
             self.api_key = str(UUID(api_key))
             self.context = self.fetch('/context')
-            logging.debug(f"Hello {self.context['User']['FirstName']}, you're now connected to the {self.context['Company']['Prefix']} instance.")
         except (TypeError, ValueError, requests.exceptions.HTTPError) as e:
             raise ApiKeyError(f"'{api_key}' is not a valid API Key. " +\
             "Please check the config file or string that was passed to the constructor and try again.") from e
             logging.exception()
+    
+    @property
+    def url(self):
+        return f'https://{self.base}.prevedere.com'
 
-    def fetch(self, path: str, payload: dict = None) -> dict:
+    def fetch(self, path: str, payload: dict = None, method: str = 'GET', data: str = None) -> dict:
         if payload is None:
             payload = {}
         payload['ApiKey'] = self.api_key
-        url = f'https://{self.base}.prevedere.com{path}'
+
         try:
-            r = requests.get(url, params=payload)
+            if method=='GET':
+                r = requests.get(f'{self.url}{path}', params=payload)
+            elif method=='POST':
+                r = requests.post(f'{self.url}{path}', params=payload, data=data)
             r.raise_for_status()
+
+            if self.log:
+                try:
+                    endpoint = re.search('^\/\w*\/?', path)[0]
+                except:
+                    endpoint = 'endpoint'
+                else:
+                    logging.info(f'{method} request to {endpoint} took {r.elapsed.total_seconds():.2f} seconds (status code: {r.status_code})')
+            return r.json()
+
         except requests.exceptions.HTTPError as e:
-            logging.warn('HTTP Error: ' + repr(r.json()))
-            raise
+            logging.exception(r.text)
         except requests.exceptions.ConnectionError as e:
             logging.exception('Connection Error')
         except requests.exceptions.Timeout as e:
             logging.exception('Timeout Error')
         except requests.exceptions.RequestException as e:
-            logging.exception('Requests Error')
-
-        try:
-            return r.json()
+            logging.exception('Requests Error')              
         except json.decoder.JSONDecodeError as e:
-            logging.exception("JSON Error")
+            logging.exception("Could not read response as JSON")
 
     def indicator(self, provider: str, provider_id: str) -> dict:
         path = f'/indicator/{provider}/{provider_id}'
@@ -182,12 +217,127 @@ class Api:
         path = f'/workbench/{workbench_id}'
         return self.fetch(path)
 
+    # POST
+    def get_integrations(self):
+        return self.fetch('/clientdimensions')
+    
+    def get_client_dimensions(self, client_dimension_group_id):
+        integrations = self.get_integrations()
+        for i in integrations:
+            if i['Id'] == client_dimension_group_id:
+                return i
+        raise Exception(f'ClientDimensionGroupId not found: {client_dimension_group_id}')
+    
+    def get_fields(self, client_dimension_group_id):
+        dimensions = self.get_client_dimensions(client_dimension_group_id)
+        fields = list(dimensions['Mapping'].values()) + ['Measure', 'Date', 'Value']
+        return set(fields)
+
+    @staticmethod
+    def make_csv(data: list, fields: set) -> str:
+        """
+        Turns data into a CSV string to be uploaded.
+        Data must contain the **specific dimensions** for the integration job,
+        as well as the fields, "Measure", "Date", and "Value".
+        Date is in format 'YYYY-MM-DD'
+        :param data: A list of records with {'key':'value'} entries.
+            e.g. [
+                {
+                    'Region':'East', 
+                    'Product':'Product 1', 
+                    'Date': '2019-09-01', 
+                    'Measure':'Sales', 
+                    'Value':100
+                    },
+                {
+                    'Region':'East', 
+                    'Product':'Product 1', 
+                    'Date': '2019-10-01', 
+                    'Measure':'Sales', 
+                    'Value':200
+                    },
+            ]
+        :type fields: A list or set of keys in each record.
+            e.g. set(['Region', 'Product', 'Date', 'Measure', 'Value'])
+        
+        returns: CSV string
+
+        example: Api.make_csv(data=[], fields=[])
+        """
+        s = io.StringIO(newline='')
+        writer = csv.DictWriter(s, fieldnames=fields)
+        writer.writeheader()
+        for d in data:
+            writer.writerow(d)
+        return s.getvalue()
+
+    @staticmethod
+    def get_csv_fields(csv_data):
+        reader = csv.DictReader(io.StringIO(csv_data))
+        return set(reader.fieldnames)
+
+    @staticmethod
+    def check_post_response(response):
+        if response['Success'] == True:
+            logging.info('POST suceeded.')
+        else:
+            raise requests.exceptions.RequestException(f"""
+        POST Failed: 
+        {response['Message']}
+        """
+        )
+
+    def validate_data(
+        self,
+        data: str,
+        client_dimension_group_id: str,
+    ):
+        # Make sure fields match up
+        app_fields = self.get_fields(client_dimension_group_id)
+        csv_fields = self.get_csv_fields(data)
+        assert app_fields == csv_fields, f"""
+        Fields do not match.
+        App Fields: {app_fields}
+        CSV Fields: {csv_fields}
+        """
+
+        response = self.fetch(
+            method='POST',
+            path=f'/validateclientdata/{client_dimension_group_id}',
+            data={'InlineData': data}
+        )
+
+        self.check_post_response(response)
+
+    def upload_data(
+        self,
+        data: str,
+        client_dimension_group_id: str,
+        should_delete_existing_records: bool = True,
+        should_replace_if_record_exists: bool = True
+    ):
+        payload={
+            # If false, becomes additive to existing records
+            'ShouldReplaceRecordIfExists': should_replace_if_record_exists,
+            }
+
+        response = self.fetch(
+            method='POST',
+            path=f'/importclientdata/{client_dimension_group_id}/{should_delete_existing_records}',
+            data={'InlineData':data},
+            payload=payload
+            )
+        
+        self.check_post_response(response)
+
+
 class ApiKeyError(ValueError):
     '''Raise when API is improperly formatted or invalid'''
     def __init__(self, message=None):
         if message is None:
             message = "An error occured with the provided API Key."
         self.message = message 
+
 
 def main():
     pass
