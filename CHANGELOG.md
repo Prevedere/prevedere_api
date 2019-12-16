@@ -1,6 +1,9 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 0.5.2 - 2019-12-16
+- Exception handling improvements
+
 ## 0.5.1 - 2019-10-13
 ### Changed
 - Logging and exception handling improvements
