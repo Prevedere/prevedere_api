@@ -102,14 +102,19 @@ class Api:
 
         except requests.exceptions.HTTPError as e:
             logging.exception(r.text)
+            raise
         except requests.exceptions.ConnectionError as e:
             logging.exception('Connection Error')
+            raise
         except requests.exceptions.Timeout as e:
             logging.exception('Timeout Error')
+            raise
         except requests.exceptions.RequestException as e:
             logging.exception('Requests Error')              
+            raise
         except json.decoder.JSONDecodeError as e:
             logging.exception("Could not read response as JSON")
+            raise
 
     def indicator(self, provider: str, provider_id: str) -> dict:
         path = f'/indicator/{provider}/{provider_id}'
